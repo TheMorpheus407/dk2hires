@@ -61,6 +61,30 @@ Original in 640×480 und werden hochskaliert.
 
 ## Einspielen
 
+Unter nativem Windows im Ordner `dk2hires` mit PowerShell:
+
+```powershell
+.\install.ps1 -Resolution 2560x1440 -DryRun
+.\install.ps1 -Resolution 2560x1440
+```
+
+`-res` ist ebenfalls als Alias fuer `-Resolution` erlaubt. PowerShell verwendet
+hier einen Bindestrich; `--res` gehoert zum Linux-Skript `install.sh`.
+Das Spiel muss beim Einspielen beendet sein. Rueckbau: `.\uninstall.ps1`.
+
+Falls das Spiel unter Windows trotz leistungsstarker Hardware stark ruckelt und
+DDrawCompat verwendet wird: In der `DDrawCompat.ini` im Spielordner (neben
+`DKII-DX.exe`, nicht im Unterordner `dk2hires`) folgende Zeile ergaenzen:
+
+```ini
+CpuAffinity=all
+```
+
+Danach das Spiel neu starten. Dies hebt die Beschraenkung von DDrawCompat auf einen
+logischen CPU-Kern auf. Die Einstellung hat das starke Ruckeln bei 2560x1440 auf
+einem Core i9-13900K mit GeForce RTX 5090 behoben. Falls dadurch Probleme auftreten,
+die Zeile wieder entfernen und das Spiel neu starten.
+
 Voraussetzungen: Linux, bash, Python 3, coreutils, findutils, diffutils, grep, sed. Das Spiel muss einmal
 gestartet worden sein, damit sein Wine-Prefix existiert, und beim Einspielen beendet sein.
 
