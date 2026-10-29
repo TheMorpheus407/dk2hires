@@ -93,6 +93,7 @@ void tf_stub_draw(void);
  *   davor an und springen dahinter zurueck, GOGs Bytes bleiben unberuehrt.
  * Zeichnen (0x0042cf82): Das Handle kommt aus der eigenen Tabelle.
  */
+#ifndef _MSC_VER
 __asm__(
     ".intel_syntax noprefix\n"
     ".globl _tf_stub_create\n"
@@ -132,6 +133,7 @@ __asm__(
     "    jmp dword ptr [_tf_ret_draw]\n"
     ".att_syntax prefix\n"
 );
+#endif
 
 int tilefix_install(void)
 {

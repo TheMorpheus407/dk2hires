@@ -56,6 +56,7 @@ DWORD __cdecl cf_focal_const(void)
 void cf_stub_cine(void);
 void cf_stub_dist(void);
 void cf_stub_focal(void);
+#ifndef _MSC_VER
 __asm__(
     ".intel_syntax noprefix\n"
     ".globl _cf_stub_cine\n"
@@ -87,6 +88,7 @@ __asm__(
     "    jmp dword ptr [_cf_ret_focal]\n"
     ".att_syntax prefix\n"
 );
+#endif
 
 int camfix_install(const char *ini)
 {

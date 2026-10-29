@@ -7,8 +7,9 @@
  * wachsen mit der Aufloesung (bei 3840x2160 rund 7000 Kacheln a ~20 KB).
  *
  * Fix: Beim Lesen der Groesse vor dem Anlegen des Heaps (0x0059841a) wird eine Mindestgroesse
- * eingesetzt, die sich aus der eingestellten Aufloesung ergibt. Ein groesserer Wert (z. B. per
- * -EHEAP) bleibt unangetastet.
+ * eingesetzt, die sich aus der eingestellten Aufloesung ergibt. Das 640x480-Frontend behaelt
+ * seine urspruengliche Groesse; die globale Einstellung wird nicht veraendert. Ein groesserer
+ * Wert (z. B. per -EHEAP) bleibt unangetastet.
  */
 #include <windows.h>
 #include "dk2hires.h"
@@ -21,17 +22,22 @@ DWORD __cdecl hf_decide(void)
 {
     DWORD orig = *(DWORD *)0x0075af68;
     DWORD v = orig;
-    if (v < hf_min_mb) {
+    DWORD w = *(DWORD *)0x00756eec, h = *(DWORD *)0x00756ef0;
+    /* The same hook initializes the 640x480 frontend after a level/movie.
+     * Raising that heap to the 4K minimum can fail in fragmented 32-bit space.
+     * Keep the original setting intact so gameplay cannot leak its minimum
+     * into the next frontend initialization. Explicit -EHEAP stays respected. */
+    if ((w > 640 || h > 480) && v < hf_min_mb) {
         v = hf_min_mb;
-        *(DWORD *)0x0075af68 = v;
     }
     hf_orig_mb = orig;
     hf_used_mb = v;
-    dk_log("heapfix: Engine-Heap Startgroesse %lu MB (Spiel wollte %lu MB, Minimum %lu MB)", v, orig, hf_min_mb);
+    dk_log("heapfix: Engine-Heap Startgroesse %lu MB (Spiel wollte %lu MB, Modus %lux%lu, Spielminimum %lu MB)", v, orig, w, h, hf_min_mb);
     return v;
 }
 
 void hf_stub(void);
+#ifndef _MSC_VER
 __asm__(
     ".intel_syntax noprefix\n"
     ".globl _hf_stub\n"
@@ -41,6 +47,7 @@ __asm__(
     "    jmp dword ptr [_hf_ret]\n"
     ".att_syntax prefix\n"
 );
+#endif
 
 static DWORD reg_dword(const char *name, DWORD def)
 {

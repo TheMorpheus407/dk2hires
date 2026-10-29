@@ -191,6 +191,9 @@ static void startup(void)
     if (GetPrivateProfileIntA("fix", "CameraFix", 1, path)) camfix_install(path);
     else dk_log("camfix: per dk2hires.ini abgeschaltet");
     fontfix_install(path);
+    menufix_install(path);
+    cursorfix_install(path);
+    wheelzoom_install(path);
     diag_bp_init(path);
     {
         DWORD d = GetPrivateProfileIntA("diag", "ScanResAfterMs", 0, path);
